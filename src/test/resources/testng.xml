@@ -11,7 +11,23 @@
     <test name="Financial Data Tests">
 
         <packages>
-            <package name="com.financial.automation.tests"/>
+            <package name="com.financial.automation.tests.data_test.file"/>
+
+            <package name="com.financial.automation.tests.data_test.instrument"/>
+
+            <package name="com.financial.automation.tests.data_test.position"/>
+
+            <package name="com.financial.automation.tests.data_test.integrity"/>
+
+            <package name="com.financial.automation.tests.data_test.transformation"/>
+
+            <package name="com.financial.automation.tests.data_test.output"/>
+
+            <package name="com.financial.automation.tests.data_test.endtoend"/>
+
+            <package name="com.financial.automation.tests.data_test.unit"/>
+            <package name="com.financial.automation.tests.api_test"/>
+            <package name="com.financial.automation.tests.ui_test"/>
         </packages>
 
     </test>

@@ -18,6 +18,7 @@
     <maven.compiler.target>17</maven.compiler.target>
     <extentreports.version>5.1.2</extentreports.version>
     <commons.csv.version>1.11.0</commons.csv.version>
+    <rest-assured.version>5.5.0</rest-assured.version>
     <log4j.version>2.23.1</log4j.version>
   </properties>
 
@@ -56,6 +57,30 @@
       <artifactId>log4j-core</artifactId>
       <version>${log4j.version}</version>
     </dependency>
+
+     <dependency>
+      <groupId>io.rest-assured</groupId>
+      <artifactId>rest-assured</artifactId>
+      <version>${rest-assured.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.rest-assured</groupId>
+      <artifactId>json-schema-validator</artifactId>
+      <version>${rest-assured.version}</version>
+    </dependency>
+    
+    <dependency>
+    <groupId>org.seleniumhq.selenium</groupId>
+    <artifactId>selenium-java</artifactId>
+    <version>4.25.0</version>
+</dependency>
+
+    <dependency>
+    <groupId>commons-io</groupId>
+    <artifactId>commons-io</artifactId>
+    <version>2.18.0</version>
+</dependency>
+
   </dependencies>
 
   <build>

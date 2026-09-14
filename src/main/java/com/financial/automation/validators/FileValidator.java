@@ -81,4 +81,36 @@ public static boolean hasRequiredHeaders(
                 "Unable to read file headers: " + filePath, e);
     }
 }
+
+public static boolean hasValidRowStructure(
+        String filePath,
+        int expectedColumnCount) {
+
+    try (CSVParser parser = CSVParser.parse(
+            Path.of(filePath),
+            java.nio.charset.StandardCharsets.UTF_8,
+            CSVFormat.DEFAULT.builder()
+                    .setHeader()
+                    .setSkipHeaderRecord(true)
+                    .build())) {
+
+        return parser.stream()
+                .allMatch(record ->
+                        record.size() == expectedColumnCount);
+
+    } catch (IOException e) {
+        throw new RuntimeException(
+                "Unable to validate row structure: " + filePath, e);
+    }
+}
+
+public static boolean hasExpectedFileName(
+        String filePath,
+        String expectedFileName) {
+
+    String actualFileName = Path.of(filePath)
+            .getFileName()
+            .toString();
+    return actualFileName.equals(expectedFileName);
+}
 }
