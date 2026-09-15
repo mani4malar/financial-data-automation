@@ -92,6 +92,6 @@ public void shouldValidateAndReconcilePositionReport()
             OutputValidator.hasExpectedRecords(
                     actualReports,
                     expectedReports),
-            "Actual report should contain exactly the expected PositionIDs");
+            "Actual report should match expected records by PositionID, ISIN, Quantity, and Total Price");
 }
 }
