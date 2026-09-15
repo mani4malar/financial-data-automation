@@ -100,80 +100,51 @@ import java.util.Set;
 
   private static Set<String> extractIds(
   List<PositionReport> reports) {
-
-  
    Set<String> ids = new HashSet<>();
-
    for (PositionReport report : reports) {
        if (report.getPositionId() != null) {
            ids.add(report.getPositionId());
        }
    }
-
    return ids;
-  
-
   }
 
   private static int countDuplicateRecords(
   List<PositionReport> reports) {
-
-  
    Set<String> uniqueIds = new HashSet<>();
    int duplicates = 0;
-
    for (PositionReport report : reports) {
-
        String positionId = report.getPositionId();
-
        if (positionId == null) {
            continue;
        }
-
        if (!uniqueIds.add(positionId)) {
            duplicates++;
        }
    }
-
    return duplicates;
-  
-
   }
 
   private static BigDecimal calculateTotalQuantity(
   List<PositionReport> reports) {
-
-  
    BigDecimal total = BigDecimal.ZERO;
-
    for (PositionReport report : reports) {
-
        if (report.getQuantity() != null) {
            total = total.add(report.getQuantity());
        }
    }
-
    return total;
-  
-
   }
 
   private static BigDecimal calculateTotalPrice(
   List<PositionReport> reports) {
-
-  
    BigDecimal total = BigDecimal.ZERO;
-
    for (PositionReport report : reports) {
-
        if (report.getTotalPrice() != null) {
            total = total.add(report.getTotalPrice());
        }
    }
-
    return total;
-  
-
   }
 
   private static String buildHtml(
@@ -365,22 +336,15 @@ import java.util.Set;
 
   private static Map<String, PositionReport> createReportMap(
   List<PositionReport> reports) {
-
-  
    Map<String, PositionReport> map = new HashMap<>();
-
    for (PositionReport report : reports) {
-
        if (report.getPositionId() != null
                && !map.containsKey(report.getPositionId())) {
 
            map.put(report.getPositionId(), report);
        }
    }
-
    return map;
-  
-
   }
 
   private static void appendFailedRecords(
