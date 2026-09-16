@@ -25,6 +25,19 @@ The framework covers:
 
 The framework is designed using maintainable automation practices with reusable validators, utilities, API clients, page objects, models, and test classes.
 
+## Recent Framework Enhancements
+
+The latest framework changes strengthen data-test diagnostics and execution visibility without changing the core assessment scope.
+
+- Added `ValidationResult` to collect multiple validation errors instead of returning only PASS/FAIL.
+- Enhanced `OutputValidator` to report detailed field-level and record-level mismatches.
+- Enhanced `EndToEndReconciliationTest` to provide more meaningful execution and reconciliation details.
+- Added centralized `FrameworkLogger` using SLF4J for framework execution logging.
+- Updated configuration for logging/financial calculation settings.
+- Updated TestNG configuration as part of the latest framework integration.
+
+These changes improve failure diagnosis and root-cause analysis while keeping test classes focused on business validation.
+
 ---
 
 ## Business Scenario
@@ -362,7 +375,7 @@ API response time is validated against a configurable threshold.
 Example:
 
 ```properties
-api.response.time.threshold=3000
+api.response.time.threshold.ms=10000
 ```
 
 The threshold is not hardcoded inside the test.
@@ -676,7 +689,7 @@ ui.base.url=...
 browser=chrome
 implicit.wait=...
 explicit.wait=...
-api.response.time.threshold=3000
+api.response.time.threshold.ms=10000
 ```
 
 Actual values can be changed without modifying test implementation.
@@ -969,6 +982,14 @@ Creates the end-to-end reconciliation HTML evidence.
 
 Contains reusable financial calculation logic.
 
+### `ValidationResult`
+
+Collects validation errors and exposes overall validation status and diagnostic messages.
+
+### `FrameworkLogger`
+
+Provides centralized framework logging.
+
 ### Validators
 
 Validate individual data quality rules.
@@ -1101,6 +1122,8 @@ It combines:
 - Negative testing
 - Configurable execution
 - Automated reporting
+- Detailed validation diagnostics
+- Centralized logging
 - Test evidence generation
 
 The design focuses on maintainability, reusability, financial-data accuracy, clear failure diagnosis, and practical automation engineering standards.

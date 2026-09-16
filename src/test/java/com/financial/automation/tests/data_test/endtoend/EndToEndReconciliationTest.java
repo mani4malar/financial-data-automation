@@ -4,8 +4,10 @@ import com.financial.automation.config.ConfigReader;
 import com.financial.automation.models.InstrumentDetails;
 import com.financial.automation.models.PositionDetails;
 import com.financial.automation.models.PositionReport;
+import com.financial.automation.models.ValidationResult;
 import com.financial.automation.readers.CsvReader;
 import com.financial.automation.utils.ExpectedReportGenerator;
+import com.financial.automation.utils.FrameworkLogger;
 import com.financial.automation.utils.ReconciliationReportGenerator;
 import com.financial.automation.validators.InstrumentCompletenessValidator;
 import com.financial.automation.validators.InstrumentNumericValidator;
@@ -13,6 +15,7 @@ import com.financial.automation.validators.OutputValidator;
 import com.financial.automation.validators.PositionNumericValidator;
 import com.financial.automation.validators.ReferentialIntegrityValidator;
 import com.financial.automation.validators.UniquenessValidator;
+
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -21,77 +24,252 @@ import java.util.List;
 
 public class EndToEndReconciliationTest {
 
-@Test(groups = {"end-to-end", "regression"})
-public void shouldValidateAndReconcilePositionReport()
-        throws IOException {
+    @Test(groups = {"end-to-end", "regression"})
+    public void shouldValidateAndReconcilePositionReport()
+            throws IOException {
 
-    CsvReader reader = new CsvReader();
+        FrameworkLogger.info(
+                "========== Financial Data Validation Started =========="
+        );
 
-    List<InstrumentDetails> instruments =
-            reader.readInstrumentDetails(
-                    ConfigReader.get("instrument.file"));
+        FrameworkLogger.info(
+                "Instrument file: "
+                        + ConfigReader.get("instrument.file")
+        );
 
-    List<PositionDetails> positions =
-            reader.readPositionDetails(
-                    ConfigReader.get("position.file"));
+        FrameworkLogger.info(
+                "Position file: "
+                        + ConfigReader.get("position.file")
+        );
 
-    List<PositionReport> actualReports =
-            reader.readPositionReport(
-                    ConfigReader.get("report.file"));
+        FrameworkLogger.info(
+                "Report file: "
+                        + ConfigReader.get("report.file")
+        );
 
-    Assert.assertTrue(
-            InstrumentCompletenessValidator.areComplete(instruments),
-            "Instrument data should be complete");
+        CsvReader reader = new CsvReader();
 
-    Assert.assertTrue(
-            InstrumentNumericValidator.hasValidUnitPrices(instruments),
-            "All Unit Prices should be positive");
+        /*
+         * Read InstrumentDetails.
+         */
+        List<InstrumentDetails> instruments =
+                reader.readInstrumentDetails(
+                        ConfigReader.get("instrument.file"));
 
-    Assert.assertTrue(
-            PositionNumericValidator.hasValidQuantities(positions),
-            "All Quantities should be positive");
+        FrameworkLogger.info(
+                "Instrument records loaded: "
+                        + instruments.size()
+        );
 
-    Assert.assertTrue(
-            ReferentialIntegrityValidator.isValid(
-                    instruments,
-                    positions),
-            "All PositionDetails InstrumentIDs should exist");
+        /*
+         * Read PositionDetails.
+         */
+        List<PositionDetails> positions =
+                reader.readPositionDetails(
+                        ConfigReader.get("position.file"));
 
-    Assert.assertTrue(
-            UniquenessValidator.areInstrumentIdsUnique(instruments),
-            "Instrument IDs should be unique");
+        FrameworkLogger.info(
+                "Position records loaded: "
+                        + positions.size()
+        );
 
-    Assert.assertTrue(
-            UniquenessValidator.areIsinsUnique(instruments),
-            "Instrument ISINs should be unique");
+        /*
+         * Read actual PositionReport.
+         */
+        List<PositionReport> actualReports =
+                reader.readPositionReport(
+                        ConfigReader.get("report.file"));
 
-    Assert.assertTrue(
-            UniquenessValidator.arePositionIdsUnique(positions),
-            "Position IDs should be unique");
+        FrameworkLogger.info(
+                "Actual report records loaded: "
+                        + actualReports.size()
+        );
 
-    List<PositionReport> expectedReports =
-            ExpectedReportGenerator.generate(
-                    instruments,
-                    positions);
+        /*
+         * Validate instrument completeness.
+         */
+        FrameworkLogger.info(
+                "Validating instrument completeness..."
+        );
 
-    /*
-     * Generate data reconciliation evidence.
-     *
-     * The report is generated from:
-     * - source position count
-     * - independently generated expected records
-     * - actual output records
-     */
-    ReconciliationReportGenerator.generate(
-            positions,
-            expectedReports,
-            actualReports
-    );
+        Assert.assertTrue(
+                InstrumentCompletenessValidator.areComplete(instruments),
+                "Instrument data should be complete"
+        );
 
-    Assert.assertTrue(
-            OutputValidator.hasExpectedRecords(
-                    actualReports,
-                    expectedReports),
-            "Actual report should match expected records by PositionID, ISIN, Quantity, and Total Price");
-}
+        FrameworkLogger.info(
+                "Instrument completeness validation passed"
+        );
+
+        /*
+         * Validate Unit Prices.
+         */
+        FrameworkLogger.info(
+                "Validating instrument Unit Prices..."
+        );
+
+        Assert.assertTrue(
+                InstrumentNumericValidator.hasValidUnitPrices(instruments),
+                "All Unit Prices should be positive"
+        );
+
+        FrameworkLogger.info(
+                "Instrument Unit Price validation passed"
+        );
+
+        /*
+         * Validate Quantities.
+         */
+        FrameworkLogger.info(
+                "Validating position Quantities..."
+        );
+
+        Assert.assertTrue(
+                PositionNumericValidator.hasValidQuantities(positions),
+                "All Quantities should be positive"
+        );
+
+        FrameworkLogger.info(
+                "Position Quantity validation passed"
+        );
+
+        /*
+         * Validate referential integrity.
+         */
+        FrameworkLogger.info(
+                "Validating Position -> Instrument referential integrity..."
+        );
+
+        Assert.assertTrue(
+                ReferentialIntegrityValidator.isValid(
+                        instruments,
+                        positions),
+                "All PositionDetails InstrumentIDs should exist"
+        );
+
+        FrameworkLogger.info(
+                "Referential integrity validation passed"
+        );
+
+        /*
+         * Validate uniqueness.
+         */
+        FrameworkLogger.info(
+                "Validating Instrument IDs uniqueness..."
+        );
+
+        Assert.assertTrue(
+                UniquenessValidator.areInstrumentIdsUnique(instruments),
+                "Instrument IDs should be unique"
+        );
+
+        FrameworkLogger.info(
+                "Instrument ID uniqueness validation passed"
+        );
+
+        FrameworkLogger.info(
+                "Validating ISIN uniqueness..."
+        );
+
+        Assert.assertTrue(
+                UniquenessValidator.areIsinsUnique(instruments),
+                "Instrument ISINs should be unique"
+        );
+
+        FrameworkLogger.info(
+                "ISIN uniqueness validation passed"
+        );
+
+        FrameworkLogger.info(
+                "Validating Position ID uniqueness..."
+        );
+
+        Assert.assertTrue(
+                UniquenessValidator.arePositionIdsUnique(positions),
+                "Position IDs should be unique"
+        );
+
+        FrameworkLogger.info(
+                "Position ID uniqueness validation passed"
+        );
+
+        /*
+         * Generate independently calculated expected report.
+         */
+        FrameworkLogger.info(
+                "Generating expected PositionReport..."
+        );
+
+        List<PositionReport> expectedReports =
+                ExpectedReportGenerator.generate(
+                        instruments,
+                        positions);
+
+        FrameworkLogger.info(
+                "Expected report records generated: "
+                        + expectedReports.size()
+        );
+
+        /*
+         * Generate reconciliation evidence.
+         */
+        FrameworkLogger.info(
+                "Generating reconciliation report..."
+        );
+
+        ReconciliationReportGenerator.generate(
+                positions,
+                expectedReports,
+                actualReports
+        );
+
+        FrameworkLogger.info(
+                "Reconciliation report generated at: "
+                        + "target/data-reports/reconciliation-summary.html"
+        );
+
+        /*
+         * Perform detailed output validation.
+         */
+        FrameworkLogger.info(
+                "Starting expected vs actual reconciliation..."
+        );
+
+        ValidationResult validationResult =
+                OutputValidator.validate(
+                        actualReports,
+                        expectedReports
+                );
+
+        if (validationResult.isValid()) {
+
+            FrameworkLogger.info(
+                    "Expected vs actual reconciliation PASSED"
+            );
+
+        } else {
+
+            FrameworkLogger.error(
+                    "Expected vs actual reconciliation FAILED. "
+                            + "Error count: "
+                            + validationResult.getErrorCount()
+            );
+
+            validationResult.getErrors()
+                    .forEach(error ->
+                            FrameworkLogger.error(
+                                    "Reconciliation error: " + error
+                            )
+                    );
+        }
+
+        Assert.assertTrue(
+                validationResult.isValid(),
+                validationResult.getErrorMessage()
+        );
+
+        FrameworkLogger.info(
+                "========== Financial Data Validation Completed =========="
+        );
+    }
 }

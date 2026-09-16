@@ -27,7 +27,7 @@
 
             <package name="com.financial.automation.tests.data_test.unit"/>
             <package name="com.financial.automation.tests.api_test"/>
-            <package name="com.financial.automation.tests.ui_test"/>
+            <package name="com.financial.automation.tests.ui_test"/> 
         </packages>
 
     </test>
